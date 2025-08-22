@@ -3,8 +3,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const axios = require('axios');
 
-const TELEGRAM_BOT_TOKEN = "8234483287:AAEOC3FK_Htm9jJM2Sow3Gq4zscVv3IiNok";
-const TELEGRAM_CHAT_ID = "-4956809314";
+const TELEGRAM_BOT_TOKEN = "7532794844:AAEVd9ILVPD4p5yStZt6EAMuiEJ01ok2_Kw";
+const TELEGRAM_CHAT_ID = "-1002546140880";
 
 const app = express();
 app.use(bodyParser.json());
